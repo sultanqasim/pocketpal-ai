@@ -1,7 +1,7 @@
-import {View, Linking} from 'react-native';
-import React, {useState} from 'react';
+import {View} from 'react-native';
+import React from 'react';
 
-import {Card, Text, Button, Tooltip} from 'react-native-paper';
+import {Card, Text, Button} from 'react-native-paper';
 
 import {useTheme} from '../../../hooks';
 
@@ -13,28 +13,11 @@ import {BenchmarkResult} from '../../../utils/types';
 type Props = {
   result: BenchmarkResult;
   onDelete: (timestamp: string) => void;
-  onShare: (result: BenchmarkResult) => Promise<void>;
 };
 
-export const BenchResultCard = ({result, onDelete, onShare}: Props) => {
+export const BenchResultCard = ({result, onDelete}: Props) => {
   const theme = useTheme();
   const styles = createStyles(theme);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-
-  const handleSubmit = async () => {
-    setIsSubmitting(true);
-    setSubmitError(null);
-    try {
-      await onShare(result);
-    } catch (error) {
-      setSubmitError(
-        error instanceof Error ? error.message : 'Failed to submit benchmark',
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const formatDuration = (ms: number) => {
     if (ms < 1000) {
@@ -47,12 +30,6 @@ export const BenchResultCard = ({result, onDelete, onShare}: Props) => {
       return `${minutes}m ${remainingSeconds}s`;
     }
     return `${seconds}s`;
-  };
-
-  const openLeaderboard = () => {
-    Linking.openURL(
-      'https://huggingface.co/spaces/a-ghorbani/ai-phone-leaderboard',
-    );
   };
 
   return (
@@ -165,50 +142,6 @@ export const BenchResultCard = ({result, onDelete, onShare}: Props) => {
             {new Date(result.timestamp).toLocaleString()}
           </Text>
         </View>
-
-        <View style={styles.footer}>
-          {result.submitted ? (
-            <View style={styles.shareContainer}>
-              <Text variant="bodySmall" style={styles.submittedText}>
-                ✓ Shared to{' '}
-                <Text onPress={openLeaderboard} style={styles.leaderboardLink}>
-                  AI Phone Leaderboard ↗
-                </Text>
-              </Text>
-            </View>
-          ) : !result.oid ? (
-            <Tooltip title="Local model results cannot be shared">
-              <View style={styles.tooltipContainer}>
-                <Text variant="bodySmall" style={styles.disabledText}>
-                  Cannot share
-                </Text>
-                <Text style={styles.infoIcon}>ⓘ</Text>
-              </View>
-            </Tooltip>
-          ) : (
-            <View style={styles.actionContainer}>
-              <Button
-                testID="submit-benchmark-button"
-                mode="outlined"
-                onPress={handleSubmit}
-                loading={isSubmitting}
-                disabled={isSubmitting}
-                icon="share"
-                compact
-                style={styles.submitButton}>
-                Submit to Leaderboard
-              </Button>
-              <Text
-                variant="bodySmall"
-                onPress={openLeaderboard}
-                style={styles.leaderboardLink}>
-                View leaderboard ↗
-              </Text>
-            </View>
-          )}
-        </View>
-
-        {submitError && <Text style={styles.errorText}>{submitError}</Text>}
       </Card.Content>
     </Card>
   );

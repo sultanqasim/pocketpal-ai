@@ -42,15 +42,6 @@ export class BenchmarkStore {
   get latestResult(): BenchmarkResult | undefined {
     return this.results[0];
   }
-
-  markAsSubmitted(uuid: string) {
-    runInAction(() => {
-      const result = this.results.find(r => r.uuid === uuid);
-      if (result) {
-        result.submitted = true;
-      }
-    });
-  }
 }
 
 export const benchmarkStore = new BenchmarkStore();

@@ -29,10 +29,6 @@ export class UIStore {
 
   iOSBackgroundDownloading = true;
 
-  benchmarkShareDialog = {
-    shouldShow: true,
-  };
-
   showError(message: string) {
     // TODO: Implement error display logic (e.g., toast, alert, etc.)
     console.error(message);
@@ -48,7 +44,6 @@ export class UIStore {
         'autoNavigatetoChat',
         'displayMemUsage',
         'iOSBackgroundDownloading',
-        'benchmarkShareDialog',
       ],
       storage: AsyncStorage,
     });
@@ -89,12 +84,6 @@ export class UIStore {
   setiOSBackgroundDownloading(value: boolean) {
     runInAction(() => {
       this.iOSBackgroundDownloading = value;
-    });
-  }
-
-  setBenchmarkShareDialogPreference(shouldShow: boolean) {
-    runInAction(() => {
-      this.benchmarkShareDialog.shouldShow = shouldShow;
     });
   }
 }

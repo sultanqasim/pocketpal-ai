@@ -8,9 +8,7 @@ import Slider from '@react-native-community/slider';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Text, Button, Card, ActivityIndicator, Icon} from 'react-native-paper';
 
-import {submitBenchmark} from '../../api/benchmark';
-
-import {Menu, Dialog, Checkbox} from '../../components';
+import {Menu, Dialog} from '../../components';
 
 import {useTheme} from '../../hooks';
 
@@ -18,7 +16,7 @@ import {createStyles} from './styles';
 import {DeviceInfoCard} from './DeviceInfoCard';
 import {BenchResultCard} from './BenchResultCard';
 
-import {modelStore, benchmarkStore, uiStore} from '../../store';
+import {modelStore, benchmarkStore} from '../../store';
 
 import type {DeviceInfo, Model} from '../../utils/types';
 import {BenchmarkConfig, BenchmarkResult} from '../../utils/types';
@@ -75,14 +73,7 @@ export const BenchmarkScreen: React.FC = observer(() => {
     string | null
   >(null);
   const [deleteAllConfirmVisible, setDeleteAllConfirmVisible] = useState(false);
-  const [deviceInfo, setDeviceInfo] = useState<DeviceInfo | null>(null);
-  const [showShareDialog, setShowShareDialog] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
-  const [dontShowAgain, setDontShowAgain] = useState(false);
-  const [pendingShareResult, setPendingShareResult] =
-    useState<BenchmarkResult | null>(null);
-  const [shareError, setShareError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [, setDeviceInfo] = useState<DeviceInfo | null>(null);
 
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -232,52 +223,6 @@ export const BenchmarkScreen: React.FC = observer(() => {
     setDeviceInfo(info);
   }, []);
 
-  const handleShareResult = async (result: BenchmarkResult) => {
-    if (!deviceInfo) {
-      throw new Error('Device information not available');
-    }
-    if (result.submitted) {
-      throw new Error('This benchmark has already been submitted');
-    }
-    try {
-      const response = await submitBenchmark(deviceInfo, result);
-      console.log('Benchmark submitted successfully:', response);
-      benchmarkStore.markAsSubmitted(result.uuid);
-    } catch (error) {
-      console.error('Failed to submit benchmark:', error);
-      throw error;
-    }
-  };
-
-  const handleSharePress = async (result: BenchmarkResult) => {
-    if (!uiStore.benchmarkShareDialog.shouldShow) {
-      await handleShareResult(result);
-      return;
-    }
-    setPendingShareResult(result);
-    setShowShareDialog(true);
-  };
-
-  const handleConfirmShare = async () => {
-    if (dontShowAgain) {
-      uiStore.setBenchmarkShareDialogPreference(false);
-    }
-    setIsSubmitting(true);
-    try {
-      if (pendingShareResult) {
-        await handleShareResult(pendingShareResult);
-      }
-      setShowShareDialog(false);
-      setPendingShareResult(null);
-    } catch (error) {
-      setShareError(
-        error instanceof Error ? error.message : 'Failed to share benchmark',
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const getMaxPPValue = () => {
     if (!modelStore.activeContextSettings) {
       return BENCHMARK_PARAMS_METADATA.pp.validation.max;
@@ -424,87 +369,6 @@ export const BenchmarkScreen: React.FC = observer(() => {
     </View>
   );
 
-  const renderShareDialog = () => (
-    <Dialog
-      testID="share-benchmark-dialog"
-      visible={showShareDialog}
-      onDismiss={() => {
-        setShowShareDialog(false);
-        setPendingShareResult(null);
-      }}
-      title="Share Benchmark Results"
-      scrollable
-      actions={[
-        {
-          testID: 'share-benchmark-dialog-cancel-button',
-          label: 'Cancel',
-          onPress: () => {
-            setShowShareDialog(false);
-            setPendingShareResult(null);
-          },
-          disabled: isSubmitting,
-        },
-        {
-          testID: 'share-benchmark-dialog-confirm-button',
-          label: isSubmitting ? 'Sharing...' : 'Share',
-          onPress: handleConfirmShare,
-          mode: 'contained',
-          loading: isSubmitting,
-          disabled: isSubmitting,
-        },
-      ]}>
-      <Text variant="bodyMedium" style={styles.dialogSection}>
-        Shared data includes:
-      </Text>
-      <View style={styles.dialogList}>
-        <Text variant="bodyMedium">• Device specs & model info</Text>
-        <Text variant="bodyMedium">• Performance metrics</Text>
-      </View>
-
-      <Button
-        testID="share-benchmark-dialog-view-raw-data-button"
-        mode="text"
-        onPress={() => setShowDetails(!showDetails)}
-        icon={showDetails ? 'chevron-up' : 'chevron-down'}
-        style={styles.detailsButton}>
-        {showDetails ? 'Hide Raw Data' : 'View Raw Data'}
-      </Button>
-
-      {showDetails && pendingShareResult && deviceInfo && (
-        <View
-          testID="share-benchmark-dialog-raw-data-container"
-          style={styles.detailsContainer}>
-          <Text variant="bodySmall" style={styles.codeBlock}>
-            {JSON.stringify(
-              {
-                deviceInfo,
-                benchmark: pendingShareResult,
-              },
-              null,
-              2,
-            )}
-          </Text>
-        </View>
-      )}
-
-      {shareError && <Text style={styles.errorText}>{shareError}</Text>}
-
-      <View style={styles.checkboxContainer}>
-        <Checkbox
-          testID="dont-show-again-checkbox"
-          checked={dontShowAgain}
-          onPress={() => setDontShowAgain(!dontShowAgain)}
-        />
-        <Text
-          variant="bodySmall"
-          style={styles.checkboxLabel}
-          onPress={() => setDontShowAgain(!dontShowAgain)}>
-          Don't show this message again
-        </Text>
-      </View>
-    </Dialog>
-  );
-
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
       <ScrollView style={styles.scrollView}>
@@ -585,7 +449,6 @@ export const BenchmarkScreen: React.FC = observer(() => {
                     <BenchResultCard
                       result={result}
                       onDelete={handleDeleteResult}
-                      onShare={handleSharePress}
                     />
                   </View>
                 ))}
@@ -632,8 +495,6 @@ export const BenchmarkScreen: React.FC = observer(() => {
                 Are you sure you want to delete all benchmark results?
               </Text>
             </Dialog>
-
-            {renderShareDialog()}
           </Card.Content>
         </Card>
       </ScrollView>

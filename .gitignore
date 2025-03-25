@@ -67,12 +67,3 @@ package-lock.json
 # testing
 /coverage
 .env
-
-# Firebase config files
-android/app/google-services.json
-ios/GoogleService-Info.plist
-
-# Environment files
-.env
-.env.*
-!.env.example

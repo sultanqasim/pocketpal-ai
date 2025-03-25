@@ -426,7 +426,6 @@ export interface BenchmarkResult {
   };
   wallTimeMs?: number;
   uuid: string;
-  submitted?: boolean;
   initSettings?: {
     n_context: number;
     n_batch: number;

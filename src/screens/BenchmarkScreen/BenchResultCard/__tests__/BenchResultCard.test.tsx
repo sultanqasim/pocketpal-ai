@@ -10,11 +10,7 @@ import {formatNumber} from '../../../../utils';
 describe('BenchResultCard', () => {
   it('renders benchmark results correctly', () => {
     const {getByText} = render(
-      <BenchResultCard
-        result={mockResult}
-        onDelete={() => {}}
-        onShare={() => Promise.resolve()}
-      />,
+      <BenchResultCard result={mockResult} onDelete={() => {}} />,
     );
 
     expect(getByText(mockResult.modelName)).toBeDefined();
@@ -24,11 +20,7 @@ describe('BenchResultCard', () => {
 
   it('shows standard deviations', () => {
     const {getByText} = render(
-      <BenchResultCard
-        result={mockResult}
-        onDelete={() => {}}
-        onShare={() => Promise.resolve()}
-      />,
+      <BenchResultCard result={mockResult} onDelete={() => {}} />,
     );
 
     expect(getByText(`±${mockResult.ppStd.toFixed(2)}`)).toBeDefined();
@@ -37,11 +29,7 @@ describe('BenchResultCard', () => {
 
   it('displays model parameters and size', () => {
     const {getByText} = render(
-      <BenchResultCard
-        result={mockResult}
-        onDelete={() => {}}
-        onShare={() => Promise.resolve()}
-      />,
+      <BenchResultCard result={mockResult} onDelete={() => {}} />,
     );
 
     expect(

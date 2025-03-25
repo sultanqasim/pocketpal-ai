@@ -104,17 +104,9 @@ export const createStyles = (theme: Theme) =>
       fontSize: 11,
       color: theme.colors.onSurfaceVariant,
     },
-    submitButton: {
-      borderColor: theme.colors.primary,
-      borderRadius: 16,
-    },
     errorText: {
       color: theme.colors.error,
       marginTop: 8,
-      fontSize: 12,
-    },
-    submittedText: {
-      color: theme.colors.primary,
       fontSize: 12,
     },
     tooltipContainer: {
@@ -131,27 +123,10 @@ export const createStyles = (theme: Theme) =>
       fontSize: 12,
       fontStyle: 'italic',
     },
-    shareContainer: {
-      alignItems: 'center',
-      gap: 8,
-    },
     actionContainer: {
       flex: 1,
       alignItems: 'center',
       gap: 8,
-    },
-    shareTextContainer: {
-      flex: 1,
-      marginRight: 16,
-    },
-    sharePrompt: {
-      color: theme.colors.primary,
-      fontWeight: '500',
-      marginBottom: 2,
-    },
-    shareSubtext: {
-      color: theme.colors.onSurfaceVariant,
-      fontSize: 11,
     },
     leaderboardLink: {
       color: theme.colors.primary,
