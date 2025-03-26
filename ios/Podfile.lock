@@ -30,7 +30,7 @@ PODS:
   - hermes-engine (0.76.3):
     - hermes-engine/Pre-built (= 0.76.3)
   - hermes-engine/Pre-built (0.76.3)
-  - llama-rn (0.5.6-1):
+  - llama-rn (0.5.8):
     - React-Core
   - RCT-Folly (2024.01.01.00):
     - boost
@@ -2109,7 +2109,7 @@ SPEC CHECKSUMS:
   fmt: 10c6e61f4be25dc963c36bd73fc7b1705fe975be
   glog: 08b301085f15bcbb6ff8632a8ebaf239aae04e6a
   hermes-engine: 0555a84ea495e8e3b4bde71b597cd87fbb382888
-  llama-rn: 7bd8afdcee95d4a0d50f53896869341d24b72b26
+  llama-rn: 57452365d8ea328ab8127f982b4619d6c587b5a8
   RCT-Folly: 84578c8756030547307e4572ab1947de1685c599
   RCTDeprecation: 2c5e1000b04ab70b53956aa498bf7442c3c6e497
   RCTRequired: 5f785a001cf68a551c5f5040fb4c415672dbb481
